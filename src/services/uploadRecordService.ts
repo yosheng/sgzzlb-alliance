@@ -1,4 +1,28 @@
-import { supabase, type Member } from "@/lib/supabase"
+import { supabase, type Member, type UploadRecord } from "@/lib/supabase"
+
+export async function queryUploadRecords(): Promise<UploadRecord[]> {
+  const { data, error } = await supabase
+    .from("upload_records")
+    .select("*")
+    .order("stat_at", { ascending: false })
+  if (error) throw new Error(error.message)
+  return data ?? []
+}
+
+export async function deleteUploadRecord(id: number): Promise<void> {
+  const { error: memErr } = await supabase.from("members").delete().eq("upload_id", id)
+  if (memErr) throw new Error(memErr.message)
+  const { error: recErr } = await supabase.from("upload_records").delete().eq("id", id)
+  if (recErr) throw new Error(recErr.message)
+}
+
+export async function updateUploadRecordDescription(id: number, description: string): Promise<void> {
+  const { error } = await supabase
+    .from("upload_records")
+    .update({ description: description || null })
+    .eq("id", id)
+  if (error) throw new Error(error.message)
+}
 
 export async function queryLatestStatAt(): Promise<string | null> {
   const { data } = await supabase
