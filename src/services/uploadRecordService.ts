@@ -34,6 +34,15 @@ export async function queryLatestStatAt(): Promise<string | null> {
   return data?.stat_at ?? null
 }
 
+export async function checkStatAtExists(statAt: string): Promise<boolean> {
+  const { data } = await supabase
+    .from("upload_records")
+    .select("id")
+    .eq("stat_at", statAt)
+    .maybeSingle()
+  return !!data
+}
+
 export async function insertCsvData(
   filename: string,
   statAt: string,

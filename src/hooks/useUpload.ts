@@ -34,6 +34,7 @@ export function useUpload() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["members"] })
+      queryClient.invalidateQueries({ queryKey: ["upload_records"] })
     },
   })
 }

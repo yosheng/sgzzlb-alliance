@@ -1,5 +1,6 @@
 import React, { useRef, useState } from "react"
 import { FileIcon } from "lucide-react"
+import { useQuery } from "@tanstack/react-query"
 import { Button } from "@/components/ui/button"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import {
@@ -10,6 +11,8 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog"
 import { useUpload } from "@/hooks/useUpload"
+import { checkStatAtExists } from "@/services/uploadRecordService"
+import { parseStatAtFromFilename } from "@/lib/csv"
 
 interface UploadDialogProps {
   open: boolean
@@ -23,6 +26,15 @@ export function UploadDialog({ open, onOpenChange, onSuccess }: UploadDialogProp
   const [description, setDescription] = useState("")
 
   const { mutate, isPending, error, reset } = useUpload()
+
+  const statAt = file ? parseStatAtFromFilename(file.name.replace(/\.[^.]+$/, "")) : null
+
+  const { data: isDuplicate, isFetching: isChecking } = useQuery({
+    queryKey: ["stat_at_exists", statAt],
+    queryFn: () => checkStatAtExists(statAt!),
+    enabled: !!statAt,
+    staleTime: 0,
+  })
 
   function handleClose(next: boolean) {
     if (isPending) return
@@ -42,7 +54,7 @@ export function UploadDialog({ open, onOpenChange, onSuccess }: UploadDialogProp
   }
 
   function handleSubmit() {
-    if (!file) return
+    if (!file || isDuplicate) return
     mutate(
       { file, description },
       {
@@ -55,6 +67,9 @@ export function UploadDialog({ open, onOpenChange, onSuccess }: UploadDialogProp
       },
     )
   }
+
+  const cannotParseStatAt = !!file && !statAt
+  const submitDisabled = !file || isPending || isChecking || !!isDuplicate || cannotParseStatAt
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
@@ -93,6 +108,16 @@ export function UploadDialog({ open, onOpenChange, onSuccess }: UploadDialogProp
             />
           </div>
 
+          {cannotParseStatAt && (
+            <Alert variant="destructive">
+              <AlertDescription>无法从文件名解析统计时间，请检查文件名格式。</AlertDescription>
+            </Alert>
+          )}
+          {isDuplicate && (
+            <Alert variant="destructive">
+              <AlertDescription>此份统计数据（{statAt}）已上传过，拒绝重复上传。</AlertDescription>
+            </Alert>
+          )}
           {error && (
             <Alert variant="destructive">
               <AlertDescription>{error.message}</AlertDescription>
@@ -104,8 +129,8 @@ export function UploadDialog({ open, onOpenChange, onSuccess }: UploadDialogProp
           <Button variant="outline" onClick={() => handleClose(false)} disabled={isPending}>
             取消
           </Button>
-          <Button onClick={handleSubmit} disabled={!file || isPending}>
-            {isPending ? "上传中…" : "确认上传"}
+          <Button onClick={handleSubmit} disabled={submitDisabled}>
+            {isChecking ? "检测中…" : isPending ? "上传中…" : "确认上传"}
           </Button>
         </DialogFooter>
       </DialogContent>
