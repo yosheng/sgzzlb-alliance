@@ -75,3 +75,13 @@ create policy "anon can read system_settings"
 
 create policy "anon can update system_settings"
   on system_settings for update to anon using (true) with check (true);
+
+create or replace function clear_alliance_data()
+returns void
+language plpgsql
+security definer
+as $$
+begin
+  truncate table members, upload_records restart identity cascade;
+end;
+$$;

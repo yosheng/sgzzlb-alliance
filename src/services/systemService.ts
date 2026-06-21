@@ -17,3 +17,8 @@ export async function updateSystemSetting(code: string, value: string): Promise<
     .eq("code", code)
   if (error) throw new Error(error.message)
 }
+
+export async function clearAllianceData(): Promise<void> {
+  const { error } = await supabase.rpc("clear_alliance_data")
+  if (error) throw new Error(error.message)
+}
