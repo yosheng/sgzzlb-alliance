@@ -43,6 +43,15 @@ export async function checkStatAtExists(statAt: string): Promise<boolean> {
   return !!data
 }
 
+export async function queryMembersByUploadId(uploadId: number): Promise<Member[]> {
+  const { data, error } = await supabase
+    .from("members")
+    .select("*")
+    .eq("upload_id", uploadId)
+  if (error) throw new Error(error.message)
+  return data ?? []
+}
+
 export async function insertCsvData(
   filename: string,
   statAt: string,

@@ -189,8 +189,8 @@ export default function MemberStats() {
                   <TableCell className="font-medium">{m.name}</TableCell>
                   <TableCell>
                     {m.is_active
-                      ? <Badge variant="default">在盟</Badge>
-                      : <Badge variant="secondary">退盟</Badge>
+                      ? <Badge className="bg-green-500 text-white hover:bg-green-600">在盟</Badge>
+                      : <Badge className="bg-red-500 text-white hover:bg-red-600">退盟</Badge>
                     }
                   </TableCell>
                   <TableCell className="text-muted-foreground">{m.group_name ?? "—"}</TableCell>
