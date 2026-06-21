@@ -21,6 +21,7 @@ export async function updateUploadRecordDescription(id: number, description: str
     .from("upload_records")
     .update({ description: description || null })
     .eq("id", id)
+    .select()
   if (error) throw new Error(error.message)
 }
 

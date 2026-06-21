@@ -40,6 +40,9 @@ create policy "anon can read upload_records"
 create policy "anon can insert upload_records"
   on upload_records for insert to anon with check (true);
 
+CREATE POLICY "anon can update upload_records"
+  ON upload_records FOR UPDATE to anon USING (true) WITH CHECK (true);
+
 create policy "anon can read members"
   on members for select to anon using (true);
 
