@@ -54,3 +54,24 @@ create policy "anon can delete members"
 
 create policy "anon can delete upload_records"
   on upload_records for delete to anon using (true);
+
+-- 系統設定表
+create table if not exists system_settings (
+  id    bigint generated always as identity primary key,
+  code  text not null unique,
+  label text not null,
+  value text
+);
+
+insert into system_settings (code, label, value) values
+  ('ALLIANCE_NAME',   '同盟名称',   ''),
+  ('ADMIN_USERNAME',  '管理员账号', 'admin'),
+  ('ADMIN_PASSWORD',  '管理员密码', 'admin123');
+
+alter table system_settings enable row level security;
+
+create policy "anon can read system_settings"
+  on system_settings for select to anon using (true);
+
+create policy "anon can update system_settings"
+  on system_settings for update to anon using (true) with check (true);

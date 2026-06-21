@@ -3,6 +3,7 @@ import { AppShell } from "@/components/AppShell"
 import MemberStats from "@/pages/MemberStats"
 import RecordCompare from "@/pages/RecordCompare"
 import RecordManager from "@/pages/RecordManager"
+import SystemManger from "@/pages/SystemManger"
 
 const router = createBrowserRouter([
   {
@@ -12,6 +13,7 @@ const router = createBrowserRouter([
       { index: true, element: <MemberStats /> },
       { path: "compare", element: <RecordCompare /> },
       { path: "records", element: <RecordManager /> },
+      { path: "system", element: <SystemManger /> },
     ],
   },
 ])

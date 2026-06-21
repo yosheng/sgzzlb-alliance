@@ -38,3 +38,10 @@ export interface MemberWithStatus extends Member {
   stat_at: string
   is_active: boolean
 }
+
+export interface SystemSetting {
+  id: number
+  code: string
+  label: string
+  value: string | null
+}

@@ -1,9 +1,11 @@
 import { useState } from "react"
 import { NavLink, Outlet, useNavigate } from "react-router-dom"
 import { MenuIcon, UploadIcon } from "lucide-react"
+import { useQuery } from "@tanstack/react-query"
 import { cn } from "@/lib/utils"
 import { navigationMenuTriggerStyle } from "@/components/ui/navigation-menu"
 import { Button } from "@/components/ui/button"
+import { Skeleton } from "@/components/ui/skeleton"
 import {
   Sheet,
   SheetContent,
@@ -11,13 +13,13 @@ import {
   SheetTitle
 } from "@/components/ui/sheet"
 import { UploadDialog } from "@/components/UploadDialog"
-
-const ALLIANCE_NAME = import.meta.env.VITE_ALLIANCE_NAME as string
+import { querySystemSettings } from "@/services/systemService"
 
 const NAV_ITEMS = [
   { to: "/", label: "统计面板" },
   { to: "/compare", label: "记录比对" },
   { to: "/records", label: "记录管理" },
+  { to: "/system", label: "系统管理" },
 ] as const
 
 function NavItems({ onClick }: { onClick?: () => void }) {
@@ -45,9 +47,16 @@ export function AppShell() {
   const [uploadOpen, setUploadOpen] = useState(false)
   const navigate = useNavigate()
 
+  const { data: settings, isLoading: settingsLoading } = useQuery({
+    queryKey: ["system_settings"],
+    queryFn: querySystemSettings,
+    staleTime: 5 * 60 * 1000,
+  })
+
+  const allianceName = settings?.find((s) => s.code === "ALLIANCE_NAME")?.value ?? ""
+
   function handleUploadSuccess(rowCount: number) {
     console.log(`上传成功，共 ${rowCount} 条`)
-    // 各页面自行通过 react-query invalidate 刷新，这里不需要额外处理
   }
 
   return (
@@ -56,12 +65,16 @@ export function AppShell() {
       <header className="sticky top-0 z-20 border-b border-border bg-background/95 backdrop-blur">
         <div className="flex h-12 items-center gap-4 px-4 md:px-6">
           {/* 左：同盟名称 */}
-          <span
-            className="cursor-pointer text-sm font-semibold shrink-0"
-            onClick={() => navigate("/")}
-          >
-            {ALLIANCE_NAME}
-          </span>
+          {settingsLoading ? (
+            <Skeleton className="h-4 w-24 shrink-0" />
+          ) : (
+            <span
+              className="cursor-pointer text-sm font-semibold shrink-0"
+              onClick={() => navigate("/")}
+            >
+              {allianceName}
+            </span>
+          )}
 
           {/* 中：桌面导航（md 以上显示） */}
           <nav className="hidden md:flex flex-1 items-center justify-center gap-1">
@@ -97,7 +110,7 @@ export function AppShell() {
       <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
         <SheetContent side="right" className="w-64 p-0">
           <SheetHeader className="border-b border-border">
-            <SheetTitle>{ALLIANCE_NAME}</SheetTitle>
+            <SheetTitle>{allianceName}</SheetTitle>
           </SheetHeader>
           <nav className="flex flex-col gap-1 p-3">
             <NavItems onClick={() => setSheetOpen(false)} />
