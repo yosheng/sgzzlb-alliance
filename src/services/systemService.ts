@@ -1,5 +1,5 @@
 import { supabase } from "@/lib/supabase"
-import type { SystemSetting } from "@/lib/supabase"
+import type { SystemSetting, Profile } from "@/lib/supabase"
 
 export async function querySystemSettings(): Promise<SystemSetting[]> {
   const { data, error } = await supabase
@@ -21,4 +21,13 @@ export async function updateSystemSetting(code: string, value: string): Promise<
 export async function clearAllianceData(): Promise<void> {
   const { error } = await supabase.rpc("clear_alliance_data")
   if (error) throw new Error(error.message)
+}
+
+export async function queryProfiles(): Promise<Profile[]> {
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("*")
+    .order("created_at", { ascending: true })
+  if (error) throw new Error(error.message)
+  return data ?? []
 }

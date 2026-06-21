@@ -65,8 +65,7 @@ create table if not exists system_settings (
 
 insert into system_settings (code, label, value) values
   ('ALLIANCE_NAME',   '同盟名称',   ''),
-  ('ADMIN_USERNAME',  '管理员账号', 'admin'),
-  ('ADMIN_PASSWORD',  '管理员密码', 'admin123');
+  ('ALLOW_REGISTER',  '开放注册',   'true');
 
 alter table system_settings enable row level security;
 
@@ -76,6 +75,7 @@ create policy "anon can read system_settings"
 create policy "anon can update system_settings"
   on system_settings for update to anon using (true) with check (true);
 
+-- 清除联盟数据 RPC
 create or replace function clear_alliance_data()
 returns void
 language plpgsql
@@ -85,3 +85,35 @@ begin
   truncate table members, upload_records restart identity cascade;
 end;
 $$;
+
+-- 使用者擴充資料表
+create table public.profiles (
+  id           uuid references auth.users(id) on delete cascade not null primary key,
+  role         text not null default 'USER',
+  display_name text,
+  created_at   timestamptz default now(),
+  constraint profiles_role_check check (role in ('ADMIN', 'USER'))
+);
+
+alter table public.profiles enable row level security;
+
+-- 宽松策略：anon 和已登入用户均可读取全部 profiles（后期收紧）
+create policy "anyone can read profiles"
+  on profiles for select using (true);
+
+-- 自动为新注册用户建立 profile
+create or replace function public.handle_new_user()
+returns trigger
+language plpgsql
+security definer set search_path = public
+as $$
+begin
+  insert into public.profiles (id, role, display_name)
+  values (new.id, 'USER', '未命名使用者');
+  return new;
+end;
+$$;
+
+create trigger on_auth_user_created
+  after insert on auth.users
+  for each row execute procedure public.handle_new_user();

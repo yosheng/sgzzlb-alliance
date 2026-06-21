@@ -45,3 +45,12 @@ export interface SystemSetting {
   label: string
   value: string | null
 }
+
+export type ProfileRole = 'ADMIN' | 'USER'
+
+export interface Profile {
+  id: string
+  role: ProfileRole
+  display_name: string | null
+  created_at: string
+}
