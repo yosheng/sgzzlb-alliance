@@ -13,7 +13,7 @@ import {
   SheetTitle
 } from "@/components/ui/sheet"
 import { UploadDialog } from "@/components/UploadDialog"
-import { querySystemSettings } from "@/services/systemService"
+import { querySystemSettings, queryMyProfile } from "@/services/systemService"
 import { signOut } from "@/services/authService"
 import { useAuthStore } from "@/stores/authStore"
 
@@ -56,7 +56,14 @@ export function AppShell() {
     staleTime: 5 * 60 * 1000,
   })
 
+  const { data: myProfile } = useQuery({
+    queryKey: ["my_profile", session?.user.id],
+    queryFn: () => queryMyProfile(session!.user.id),
+    enabled: !!session,
+  })
+
   const allianceName = settings?.find((s) => s.code === "ALLIANCE_NAME")?.value ?? ""
+  const displayName = myProfile?.display_name ?? session?.user.email?.split("@")[0] ?? ""
 
   async function handleSignOut() {
     await signOut()
@@ -101,14 +108,19 @@ export function AppShell() {
             </Button>
 
             {session && (
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={handleSignOut}
-                title={`登出 ${session.user.email}`}
-              >
-                <LogOutIcon className="size-4" />
-              </Button>
+              <>
+                <span className="hidden sm:inline text-xs text-muted-foreground">
+                  {displayName}
+                </span>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={handleSignOut}
+                  title={`登出 ${session.user.email}`}
+                >
+                  <LogOutIcon className="size-4" />
+                </Button>
+              </>
             )}
 
             {/* 手机端 hamburger（md 以下显示） */}

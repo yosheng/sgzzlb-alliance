@@ -32,6 +32,16 @@ export async function queryProfiles(): Promise<Profile[]> {
   return data ?? []
 }
 
+export async function queryMyProfile(id: string): Promise<Profile | null> {
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("*")
+    .eq("id", id)
+    .single()
+  if (error) throw new Error(error.message)
+  return data
+}
+
 export async function updateProfile(
   id: string,
   fields: { role?: string; display_name?: string },
