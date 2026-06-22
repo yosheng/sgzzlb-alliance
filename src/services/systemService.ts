@@ -31,3 +31,14 @@ export async function queryProfiles(): Promise<Profile[]> {
   if (error) throw new Error(error.message)
   return data ?? []
 }
+
+export async function updateProfile(
+  id: string,
+  fields: { role?: string; display_name?: string },
+): Promise<void> {
+  const { error } = await supabase
+    .from("profiles")
+    .update(fields)
+    .eq("id", id)
+  if (error) throw new Error(error.message)
+}

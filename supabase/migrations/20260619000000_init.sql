@@ -63,17 +63,22 @@ create table if not exists system_settings (
   value text
 );
 
-insert into system_settings (code, label, value) values
-  ('ALLIANCE_NAME',   '同盟名称',   ''),
-  ('ALLOW_REGISTER',  '开放注册',   'true');
-
 alter table system_settings enable row level security;
 
 create policy "anon can read system_settings"
   on system_settings for select to anon using (true);
 
+create policy "anon can insert system_settings"
+  on system_settings for insert to anon with check (true);
+
 create policy "anon can update system_settings"
   on system_settings for update to anon using (true) with check (true);
+
+insert into system_settings (code, label, value) values
+  ('ALLIANCE_NAME',   '同盟名称',   ''),
+  ('ALLOW_REGISTER',  '开放注册',   'true'),
+  ('EMAIL_DOMAIN',    '邮箱后缀',   'yosheng.tw');
+
 
 -- 清除联盟数据 RPC
 create or replace function clear_alliance_data()
@@ -100,6 +105,9 @@ alter table public.profiles enable row level security;
 -- 宽松策略：anon 和已登入用户均可读取全部 profiles（后期收紧）
 create policy "anyone can read profiles"
   on profiles for select using (true);
+
+create policy "anyone can update profiles"
+  on profiles for update using (true) with check (true);
 
 -- 自动为新注册用户建立 profile
 create or replace function public.handle_new_user()

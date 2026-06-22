@@ -39,6 +39,7 @@ export default function SystemManager() {
   })
 
   const allowRegister = settings.find((s) => s.code === "ALLOW_REGISTER")?.value === "true"
+  const emailDomain = settings.find((s) => s.code === "EMAIL_DOMAIN")?.value ?? "yosheng.tw"
 
   if (settingsLoading || profilesLoading) {
     return (
@@ -64,7 +65,7 @@ export default function SystemManager() {
     <div className="px-4 py-4 md:px-6 space-y-8">
       <SettingsTable settings={settings} />
 
-      <UserTable profiles={profiles} allowRegister={allowRegister} />
+      <UserTable profiles={profiles} allowRegister={allowRegister} emailDomain={emailDomain} />
 
       <section className="border-t border-border pt-6">
         <h2 className="text-sm font-medium text-foreground mb-1">危险操作</h2>
