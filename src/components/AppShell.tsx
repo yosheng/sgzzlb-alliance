@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { NavLink, Outlet, useNavigate } from "react-router-dom"
-import { MenuIcon, UploadIcon } from "lucide-react"
+import { MenuIcon, UploadIcon, LogOutIcon } from "lucide-react"
 import { useQuery } from "@tanstack/react-query"
 import { cn } from "@/lib/utils"
 import { navigationMenuTriggerStyle } from "@/components/ui/navigation-menu"
@@ -14,6 +14,8 @@ import {
 } from "@/components/ui/sheet"
 import { UploadDialog } from "@/components/UploadDialog"
 import { querySystemSettings } from "@/services/systemService"
+import { signOut } from "@/services/authService"
+import { useAuthStore } from "@/stores/authStore"
 
 const NAV_ITEMS = [
   { to: "/", label: "统计面板" },
@@ -46,6 +48,7 @@ export function AppShell() {
   const [sheetOpen, setSheetOpen] = useState(false)
   const [uploadOpen, setUploadOpen] = useState(false)
   const navigate = useNavigate()
+  const session = useAuthStore((s) => s.session)
 
   const { data: settings, isLoading: settingsLoading } = useQuery({
     queryKey: ["system_settings"],
@@ -54,6 +57,11 @@ export function AppShell() {
   })
 
   const allianceName = settings?.find((s) => s.code === "ALLIANCE_NAME")?.value ?? ""
+
+  async function handleSignOut() {
+    await signOut()
+    navigate("/login", { replace: true })
+  }
 
   function handleUploadSuccess(rowCount: number) {
     console.log(`上传成功，共 ${rowCount} 条`)
@@ -81,7 +89,7 @@ export function AppShell() {
             <NavItems />
           </nav>
 
-          {/* 右：上传按钮 + 手机 hamburger */}
+          {/* 右：上传按钮 + 登出 + 手机 hamburger */}
           <div className="ml-auto flex items-center gap-2">
             <Button
               variant="outline"
@@ -91,6 +99,17 @@ export function AppShell() {
               <UploadIcon data-icon="inline-start" />
               <span className="hidden sm:inline">上传同盟统计</span>
             </Button>
+
+            {session && (
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={handleSignOut}
+                title={`登出 ${session.user.email}`}
+              >
+                <LogOutIcon className="size-4" />
+              </Button>
+            )}
 
             {/* 手机端 hamburger（md 以下显示） */}
             <Button
