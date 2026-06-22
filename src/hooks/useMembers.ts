@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query"
-import { queryMembersInRange, type MemberWithStatus } from "@/services/memberService"
+import { queryMembersInRange } from "@/services/memberService"
+import type { MemberWithStatus } from "@/lib/supabase"
 
 export function useMembers(from: string, to: string) {
   return useQuery<MemberWithStatus[], Error>({
