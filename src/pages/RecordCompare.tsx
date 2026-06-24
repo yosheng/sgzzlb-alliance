@@ -275,8 +275,8 @@ export default function RecordCompare() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-10 text-xs">#</TableHead>
-              <TableHead className="text-xs">成员</TableHead>
+              <TableHead className="sticky left-0 z-20 w-10 bg-background text-xs">#</TableHead>
+              <TableHead className="sticky left-10 z-20 w-[120px] max-w-[120px] bg-background text-xs">成员</TableHead>
               {SORTABLE_META.map((key) => (
                 <TableHead
                   key={key}
@@ -316,8 +316,15 @@ export default function RecordCompare() {
                 ))
               : sorted.map((row, i) => (
                   <TableRow key={row.name}>
-                    <TableCell className="text-xs text-muted-foreground">{i + 1}</TableCell>
-                    <TableCell className="font-medium">{row.name}</TableCell>
+                    <TableCell className="sticky left-0 z-10 bg-background text-xs text-muted-foreground">{i + 1}</TableCell>
+                    <TableCell className="sticky left-10 z-10 w-[120px] max-w-[120px] bg-background font-medium">
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <span className="block truncate">{row.name}</span>
+                        </TooltipTrigger>
+                        <TooltipContent side="right" className="text-xs">{row.name}</TooltipContent>
+                      </Tooltip>
+                    </TableCell>
                     <TableCell className="text-muted-foreground">{row.group_name ?? "—"}</TableCell>
                     <TableCell className="text-muted-foreground">{row.state ?? "—"}</TableCell>
                     {DIFF_FIELDS.map(({ key }) => (

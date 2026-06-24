@@ -13,6 +13,11 @@ import {
   TableRow,
   TableCaption,
 } from "@/components/ui/table"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 import { useMembers } from "@/hooks/useMembers"
 import type { MemberWithStatus } from "@/lib/supabase"
 
@@ -156,8 +161,17 @@ export default function MemberStats() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-10 text-xs">#</TableHead>
-              {COLUMNS.map(({ key, label }) => (
+              <TableHead className="sticky left-0 z-20 w-10 bg-background text-xs">#</TableHead>
+              <TableHead
+                className="sticky left-10 z-20 w-[120px] max-w-[120px] cursor-pointer select-none bg-background text-xs hover:text-foreground"
+                onClick={() => handleSort("name")}
+              >
+                <span className="inline-flex items-center gap-1">
+                  成员
+                  <SortIcon col="name" sortKey={sortKey} sortDir={sortDir} />
+                </span>
+              </TableHead>
+              {COLUMNS.filter(({ key }) => key !== "name").map(({ key, label }) => (
                 <TableHead
                   key={key}
                   className="cursor-pointer select-none text-xs hover:text-foreground"
@@ -185,8 +199,15 @@ export default function MemberStats() {
             ) : (
               sorted.map((m, i) => (
                 <TableRow key={m.id}>
-                  <TableCell className="text-xs text-muted-foreground">{i + 1}</TableCell>
-                  <TableCell className="font-medium">{m.name}</TableCell>
+                  <TableCell className="sticky left-0 z-10 bg-background text-xs text-muted-foreground">{i + 1}</TableCell>
+                  <TableCell className="sticky left-10 z-10 w-[120px] max-w-[120px] bg-background font-medium">
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <span className="block truncate">{m.name}</span>
+                      </TooltipTrigger>
+                      <TooltipContent side="right" className="text-xs">{m.name}</TooltipContent>
+                    </Tooltip>
+                  </TableCell>
                   <TableCell>
                     {m.is_active
                       ? <Badge className="bg-green-500 text-white hover:bg-green-600">在盟</Badge>
