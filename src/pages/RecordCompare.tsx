@@ -1,5 +1,5 @@
-import { useState } from "react"
-import { ArrowLeftRightIcon, ArrowUpDownIcon, ArrowUpIcon, ArrowDownIcon } from "lucide-react"
+import { useState, useEffect } from "react"
+import { ArrowLeftRightIcon, ArrowUpDownIcon, ArrowUpIcon, ArrowDownIcon, XIcon } from "lucide-react"
 import { useQuery } from "@tanstack/react-query"
 import { Button } from "@/components/ui/button"
 import { Alert, AlertDescription } from "@/components/ui/alert"
@@ -140,6 +140,12 @@ export default function RecordCompare() {
       queryFn: queryUploadRecords,
     })
 
+  useEffect(() => {
+    if (records.length > 0 && tgtId === "") {
+      setTgtId(String(records[0].id))
+    }
+  }, [records])
+
   const srcIdNum = srcId ? Number(srcId) : null
   const tgtIdNum = tgtId ? Number(tgtId) : null
 
@@ -218,6 +224,11 @@ export default function RecordCompare() {
               ))}
             </SelectContent>
           </Select>
+          {srcId && (
+            <Button size="icon" variant="ghost" className="size-6 shrink-0" onClick={() => setSrcId("")}>
+              <XIcon className="size-3" />
+            </Button>
+          )}
         </div>
 
         <Button
@@ -252,6 +263,11 @@ export default function RecordCompare() {
               ))}
             </SelectContent>
           </Select>
+          {tgtId && (
+            <Button size="icon" variant="ghost" className="size-6 shrink-0" onClick={() => setTgtId("")}>
+              <XIcon className="size-3" />
+            </Button>
+          )}
         </div>
       </div>
 
