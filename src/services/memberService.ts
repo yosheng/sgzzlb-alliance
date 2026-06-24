@@ -1,6 +1,22 @@
 import { supabase, type Member, type MemberWithStatus } from "@/lib/supabase"
 import { queryLatestStatAt } from "@/services/uploadRecordService"
 
+export async function queryLatestMembers(): Promise<Member[]> {
+  const { data: record } = await supabase
+    .from("upload_records")
+    .select("id")
+    .order("stat_at", { ascending: false })
+    .limit(1)
+    .single()
+  if (!record) return []
+  const { data, error } = await supabase
+    .from("members")
+    .select("*")
+    .eq("upload_id", record.id)
+  if (error) throw new Error(error.message)
+  return data ?? []
+}
+
 export async function queryMembersInRange(
   from: string,
   to: string,

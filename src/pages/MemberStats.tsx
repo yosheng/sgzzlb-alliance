@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/tooltip"
 import { useMembers } from "@/hooks/useMembers"
 import type { MemberWithStatus } from "@/lib/supabase"
+import MemberAnalytics from "@/components/analytics/MemberAnalytics"
 
 // ── 工具函数 ──────────────────────────────────────────────────
 
@@ -117,6 +118,7 @@ export default function MemberStats() {
 
   return (
     <div className="px-4 py-4 md:px-6">
+      <MemberAnalytics />
       {/* 筛选栏 */}
       <div className="mb-4 flex flex-wrap items-center gap-3">
         <label className="flex items-center gap-1.5 text-xs text-muted-foreground">
