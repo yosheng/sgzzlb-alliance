@@ -37,12 +37,12 @@ jobs:
       run: find dist/ -print
 
     - name: 📂 Sync Files via FTP
-      uses: SamKirkland/FTP-Deploy-Action@4.3.0
+      uses: SamKirkland/FTP-Deploy-Action@4.3.0K
       with:
         server: ${{ secrets.FTP_ADDRESS }}
         username: ${{ secrets.FTP_USERNAME }}
         password: ${{ secrets.FTP_PASSWORD }}
         local-dir: dist/
         server-dir: /public_html/sgzzlb-alliance/
-        protocol: ftp
+        protocol: ftps
         security: strict
