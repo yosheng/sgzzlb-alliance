@@ -42,7 +42,7 @@ jobs:
         server: ${{ secrets.FTP_ADDRESS }}
         username: ${{ secrets.FTP_USERNAME }}
         password: ${{ secrets.FTP_PASSWORD }}
-        local-dir: build/
+        local-dir: dist/
         server-dir: /public_html/sgzzlb-alliance/
         protocol: ftps
         security: loose
