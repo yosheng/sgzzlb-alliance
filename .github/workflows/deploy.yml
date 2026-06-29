@@ -45,4 +45,4 @@ jobs:
         local-dir: dist/
         server-dir: /public_html/sgzzlb-alliance/
         protocol: ftps
-        security: strict
+        security: loose
