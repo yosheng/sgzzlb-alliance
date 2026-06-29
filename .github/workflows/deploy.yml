@@ -44,5 +44,5 @@ jobs:
         password: ${{ secrets.FTP_PASSWORD }}
         local-dir: dist/
         server-dir: /public_html/sgzzlb-alliance/
-        protocol: ftps
-        security: loose
+        protocol: ftp
+        security: strict
