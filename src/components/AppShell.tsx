@@ -18,16 +18,16 @@ import { signOut } from "@/services/authService"
 import { useAuthStore } from "@/stores/authStore"
 
 const NAV_ITEMS = [
-  { to: "/", label: "统计面板" },
-  { to: "/compare", label: "记录比对" },
-  { to: "/records", label: "记录管理" },
-  { to: "/system", label: "系统管理" },
+  { to: "/", label: "统计面板", adminOnly: false },
+  { to: "/compare", label: "记录比对", adminOnly: false },
+  { to: "/records", label: "记录管理", adminOnly: true },
+  { to: "/system", label: "系统管理", adminOnly: true },
 ] as const
 
-function NavItems({ onClick }: { onClick?: () => void }) {
+function NavItems({ onClick, isAdmin }: { onClick?: () => void; isAdmin: boolean }) {
   return (
     <>
-      {NAV_ITEMS.map(({ to, label }) => (
+      {NAV_ITEMS.filter(({ adminOnly }) => !adminOnly || isAdmin).map(({ to, label }) => (
         <NavLink
           key={to}
           to={to}
@@ -64,6 +64,7 @@ export function AppShell() {
 
   const allianceName = settings?.find((s) => s.code === "ALLIANCE_NAME")?.value ?? ""
   const displayName = myProfile?.display_name ?? session?.user.email?.split("@")[0] ?? ""
+  const isAdmin = myProfile?.role === "ADMIN"
 
   async function handleSignOut() {
     await signOut()
@@ -93,19 +94,21 @@ export function AppShell() {
 
           {/* 中：桌面导航（md 以上显示） */}
           <nav className="hidden md:flex flex-1 items-center justify-center gap-1">
-            <NavItems />
+            <NavItems isAdmin={isAdmin} />
           </nav>
 
           {/* 右：上传按钮 + 登出 + 手机 hamburger */}
           <div className="ml-auto flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setUploadOpen(true)}
-            >
-              <UploadIcon data-icon="inline-start" />
-              <span className="hidden sm:inline">上传同盟统计</span>
-            </Button>
+            {isAdmin && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setUploadOpen(true)}
+              >
+                <UploadIcon data-icon="inline-start" />
+                <span className="hidden sm:inline">上传同盟统计</span>
+              </Button>
+            )}
 
             {session && (
               <>
@@ -144,7 +147,7 @@ export function AppShell() {
             <SheetTitle>{allianceName}</SheetTitle>
           </SheetHeader>
           <nav className="flex flex-col gap-1 p-3">
-            <NavItems onClick={() => setSheetOpen(false)} />
+            <NavItems isAdmin={isAdmin} onClick={() => setSheetOpen(false)} />
           </nav>
         </SheetContent>
       </Sheet>
