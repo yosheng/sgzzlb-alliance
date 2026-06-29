@@ -34,7 +34,7 @@ jobs:
       run: pnpm build
 
     - name: 📂 List Output Files
-      run: find build/ -print
+      run: find dist/ -print
 
     - name: 📂 Sync Files via FTP
       uses: SamKirkland/FTP-Deploy-Action@4.3.0
