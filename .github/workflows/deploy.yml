@@ -1,0 +1,46 @@
+name: 🚀 Deploy React Homepage
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    name: 🎉 Build and Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: 🚚 Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Install pnpm
+      uses: pnpm/action-setup@v4
+
+    - name: Use Node.js 20
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'pnpm'
+
+    - name: 🔨 Install Dependencies
+      run: pnpm install --frozen-lockfile
+
+    - name: 🔨 Build Project
+      run: pnpm build
+
+    - name: 📂 List Output Files
+      run: find build/ -print
+
+    - name: 📂 Sync Files via FTP
+      uses: SamKirkland/FTP-Deploy-Action@4.3.0
+      with:
+        server: ${{ secrets.FTP_ADDRESS }}
+        username: ${{ secrets.FTP_USERNAME }}
+        password: ${{ secrets.FTP_PASSWORD }}
+        local-dir: build/
+        server-dir: /public_html/sgzzlb-alliance/
+        protocol: ftps
+        security: loose
