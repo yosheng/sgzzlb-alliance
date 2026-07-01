@@ -3,7 +3,8 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom"
 import { AppShell } from "@/components/AppShell"
 import { RequireAuth } from "@/components/RequireAuth"
 import { useAuthStore } from "@/stores/authStore"
-import MemberStats from "@/pages/MemberStats"
+import LatestStats from "@/pages/LatestStats"
+import IntervalStats from "@/pages/IntervalStats"
 import RecordCompare from "@/pages/RecordCompare"
 import RecordManager from "@/pages/RecordManager"
 import SystemManger from "@/pages/SystemManger"
@@ -22,7 +23,8 @@ const router = createBrowserRouter([
       </RequireAuth>
     ),
     children: [
-      { index: true, element: <MemberStats /> },
+      { index: true, element: <LatestStats /> },
+      { path: "interval", element: <IntervalStats /> },
       { path: "compare", element: <RecordCompare /> },
       { path: "records", element: <RecordManager /> },
       { path: "system", element: <SystemManger /> },

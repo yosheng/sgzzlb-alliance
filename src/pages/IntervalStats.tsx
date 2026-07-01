@@ -20,7 +20,6 @@ import {
 } from "@/components/ui/tooltip"
 import { useMembers } from "@/hooks/useMembers"
 import type { MemberWithStatus } from "@/lib/supabase"
-import MemberAnalytics from "@/components/analytics/MemberAnalytics"
 
 // ── 工具函数 ──────────────────────────────────────────────────
 
@@ -88,7 +87,7 @@ function SortIcon({ col, sortKey, sortDir }: { col: SortKey; sortKey: SortKey; s
 
 // ── 页面组件 ──────────────────────────────────────────────────
 
-export default function MemberStats() {
+export default function IntervalStats() {
   const now = new Date()
   const [rangeFrom, setRangeFrom] = useState(toLocalDatetimeValue(getMondayOfWeek(now)))
   const [rangeTo, setRangeTo] = useState(toLocalDatetimeValue(now))
@@ -118,7 +117,6 @@ export default function MemberStats() {
 
   return (
     <div className="px-4 py-4 md:px-6">
-      <MemberAnalytics />
       {/* 筛选栏 */}
       <div className="mb-4 flex flex-wrap items-center gap-3">
         <label className="flex items-center gap-1.5 text-xs text-muted-foreground">

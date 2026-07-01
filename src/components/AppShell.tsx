@@ -18,7 +18,8 @@ import { signOut } from "@/services/authService"
 import { useAuthStore } from "@/stores/authStore"
 
 const NAV_ITEMS = [
-  { to: "/", label: "统计面板", adminOnly: false },
+  { to: "/", label: "最新统计", adminOnly: false },
+  { to: "/interval", label: "区间统计", adminOnly: false },
   { to: "/compare", label: "记录比对", adminOnly: false },
   { to: "/records", label: "记录管理", adminOnly: true },
   { to: "/system", label: "系统管理", adminOnly: true },
